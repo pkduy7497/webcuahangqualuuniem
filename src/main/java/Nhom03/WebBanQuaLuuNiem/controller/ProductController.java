@@ -9,13 +9,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import java.util.List;
+
 @Controller
 @RequestMapping("/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
+
     @Autowired
     private CategoryService categoryService;
+
     @GetMapping
     public String showProductList(Model model) {
         model.addAttribute("products", productService.getAllProducts());
@@ -28,6 +32,7 @@ public class ProductController {
         model.addAttribute("categories", categoryService.getAllCategories());
         return "/products/add-product";
     }
+
     @PostMapping("/add")
     public String addProduct(@Valid Product product, BindingResult result) {
         if (result.hasErrors()) {
@@ -36,6 +41,7 @@ public class ProductController {
         productService.addProduct(product);
         return "redirect:/products";
     }
+
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id)
@@ -44,6 +50,7 @@ public class ProductController {
         model.addAttribute("categories", categoryService.getAllCategories());
         return "/products/update-product";
     }
+
     @PostMapping("/update/{id}")
     public String updateProduct(@PathVariable Long id, @Valid Product product, BindingResult result) {
         if (result.hasErrors()) {
@@ -53,9 +60,18 @@ public class ProductController {
         productService.updateProduct(product);
         return "redirect:/products";
     }
+
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProductById(id);
         return "redirect:/products";
+    }
+
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
+        List<Product> searchResults = productService.searchProductsByName(keyword);
+        model.addAttribute("products", searchResults);
+        model.addAttribute("keyword", keyword); // Pass the keyword to the template
+        return "/products/product-list";
     }
 }

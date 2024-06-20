@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -27,9 +28,7 @@ public class CategoryService {
     }
 
     public void updateCategory(@NotNull Category category) {
-        Category existingCategory = categoryRepository.findById(category.getId())
-                .orElseThrow(() -> new IllegalStateException("Category with ID " +
-                        category.getId() + " does not exist."));
+        Category existingCategory = categoryRepository.findById(category.getId()).orElseThrow(() -> new IllegalStateException("Category with ID " + category.getId() + " does not exist."));
         existingCategory.setName(category.getName());
         categoryRepository.save(existingCategory);
     }

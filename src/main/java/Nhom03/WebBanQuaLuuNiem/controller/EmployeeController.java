@@ -1,11 +1,8 @@
 package Nhom03.WebBanQuaLuuNiem.controller;
 
 import Nhom03.WebBanQuaLuuNiem.model.Employee;
-import Nhom03.WebBanQuaLuuNiem.model.Product;
-import Nhom03.WebBanQuaLuuNiem.service.CategoryService;
 import Nhom03.WebBanQuaLuuNiem.service.EmployeeService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,51 +14,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/Employee")
 @RequiredArgsConstructor
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
+
     @GetMapping
     public String showEmployeeList(Model model) {
-        model.addAttribute("products", employeeService.getAllProducts());
-        return "/products/product-list";
+        model.addAttribute("Employee", employeeService.getAllEmployee());
+        return "/Employee/employee-list";
     }
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
-        model.addAttribute("product", new Product());
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "/products/add-product";
+        model.addAttribute("Employee", new Employee());
+        return "/Employee/add-employee";
     }
+
     @PostMapping("/add")
-    public String addEmployee(@Valid Product product, BindingResult result) {
+    public String addEmployee(@Valid Employee employee, BindingResult result) {
         if (result.hasErrors()) {
-            return "/products/add-product";
+            return "/Employee/add-employee";
         }
-        employeeService.addProduct(product);
-        return "redirect:/products";
+        employeeService.addEmployee(employee);
+        return "redirect:/Employee";
     }
+
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Product product = employeeService.getProductById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
-        model.addAttribute("product", product);
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "/products/update-product";
+        Employee employee = employeeService.getEmployeeById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Employee Id:" + id));
+        model.addAttribute("Employee", employee);
+        return "/Employee/update-employee";
     }
+
     @PostMapping("/update/{id}")
-    public String updateEmployee(@PathVariable Long id, @Valid Product product, BindingResult result) {
+    public String updateEmployee(@PathVariable Long id, @Valid Employee employee, BindingResult result) {
         if (result.hasErrors()) {
-            product.setId(id);
-            return "/products/update-product";
+            employee.setId(id);
+            return "/Employee/update-employee";
         }
-        employeeService.updateProduct(product);
-        return "redirect:/products";
+        employeeService.updateEmployee(employee);
+        return "redirect:/Employee";
     }
+
     @GetMapping("/delete/{id}")
     public String deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteProductById(id);
-        return "redirect:/products";
+        employeeService.deleteEmployeeById(id);
+        return "redirect:/Employee";
     }
 }

@@ -2,10 +2,8 @@ package Nhom03.WebBanQuaLuuNiem.service;
 
 import Nhom03.WebBanQuaLuuNiem.Role;
 import Nhom03.WebBanQuaLuuNiem.model.Employee;
-import Nhom03.WebBanQuaLuuNiem.model.Product;
 import Nhom03.WebBanQuaLuuNiem.repository.IRoleRepository;
 import Nhom03.WebBanQuaLuuNiem.repository.EmployeeRepository;
-import Nhom03.WebBanQuaLuuNiem.repository.ProductRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -25,50 +22,49 @@ import java.util.Optional;
 public class EmployeeService implements UserDetailsService {
     @Autowired
     private EmployeeRepository employeeRepository;
+
     @Autowired
     private IRoleRepository roleRepository;
-    // Lưu người dùng mới vào cơ sở dữ liệu sau khi mã hóa mật khẩu.
+
     public void save(@NotNull Employee employee) {
         employee.setPassword(new BCryptPasswordEncoder().encode(employee.getPassword()));
         employeeRepository.save(employee);
     }
-    // Gán vai trò mặc định cho người dùng dựa trên tên người dùng.
+
     public void setDefaultRole(String username) {
         employeeRepository.findByUsername(username).ifPresentOrElse(
                 employee -> {
-                    employee.getRoles().add(roleRepository.findRoleById(Role.USER.value));
+                    employee.getRoles().add(roleRepository.findRoleById(Role.ADMIN.value));
                     employeeRepository.save(employee);
                 },
                 () -> { throw new UsernameNotFoundException("User not found"); }
         );
     }
-    // Tải thông tin chi tiết người dùng để xác thực.
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws
-            UsernameNotFoundException {
-        var user = employeeRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var employee = employeeRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Employee not found"));
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .authorities(user.getAuthorities())
-                .accountExpired(!user.isAccountNonExpired())
-                .accountLocked(!user.isAccountNonLocked())
-                .credentialsExpired(!user.isCredentialsNonExpired())
-                .disabled(!user.isEnabled())
-                .build();
+            .withUsername(employee.getUsername())
+            .password(employee.getPassword())
+            .authorities(employee.getAuthorities())
+            .accountExpired(!employee.isAccountNonExpired())
+            .accountLocked(!employee.isAccountNonLocked())
+            .credentialsExpired(!employee.isCredentialsNonExpired())
+            .disabled(!employee.isEnabled())
+            .build();
     }
-    // Tìm kiếm người dùng dựa trên tên đăng nhập.
-    public Optional<Employee> findByUsername(String username) throws
-            UsernameNotFoundException {
+
+    public Optional<Employee> findByUsername(String username) throws UsernameNotFoundException {
         return employeeRepository.findByUsername(username);
     }
-    private final EmployeeRepository employeeRepository;
+
     public List<Employee> getAllEmployee() {
         return employeeRepository.findAll();
     }
-    public Optional<Employee> getEmployeeByUsername(String username) {
-        return employeeRepository.findByUsername(username);
+
+    public Optional<Employee> getEmployeeById(Long id) {
+        return employeeRepository.findById(id);
     }
 
     public void addEmployee(Employee employee) {
@@ -76,19 +72,16 @@ public class EmployeeService implements UserDetailsService {
     }
 
     public void updateEmployee(@NotNull Employee employee) {
-        Employee existingEmployee = employeeRepository.findById(employee.getUsername())
-                .orElseThrow(() -> new IllegalStateException("Product with ID " +
-                        employee.getId() + " does not exist."));
+        Employee existingEmployee = employeeRepository.findById(employee.getId()).orElseThrow(() -> new IllegalStateException("Employee with ID " + employee.getId() + " does not exist."));
         existingEmployee.setUsername(employee.getUsername());
         existingEmployee.setPassword(employee.getPassword());
         employeeRepository.save(existingEmployee);
     }
 
-    public void deleteEmployeeById(String username) {
-        if (!employeeRepository.existsById(username)) {
-            throw new IllegalStateException("Product with ID " + username + " does not exist.");
+    public void deleteEmployeeById(Long id) {
+        if (!employeeRepository.existsById(id)) {
+            throw new IllegalStateException("Employee with ID " + id + " does not exist.");
         }
-        employeeRepository.deleteById(username);
+        employeeRepository.deleteById(id);
     }
 }
-
