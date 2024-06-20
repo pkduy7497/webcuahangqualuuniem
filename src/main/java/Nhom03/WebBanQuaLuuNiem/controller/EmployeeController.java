@@ -38,6 +38,7 @@ public class EmployeeController {
             return "/Employee/add-employee";
         }
         employeeService.addEmployee(employee);
+        employeeService.setDefaultRole(employee.getUsername());
         return "redirect:/Employee";
     }
 
@@ -55,6 +56,7 @@ public class EmployeeController {
             return "/Employee/update-employee";
         }
         employeeService.updateEmployee(employee);
+        employeeService.setDefaultRole(employee.getUsername());
         return "redirect:/Employee";
     }
 

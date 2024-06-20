@@ -8,7 +8,7 @@
         <section layout:fragment="content">
             <h1>Employee List</h1>
             <div sec:authorize="hasAuthority('ADMIN')">
-                <a th:href="@{/employee/add}" class="btn btn-primary mb-3">Add New Employee</a>
+                <a th:href="@{/Employee/add}" class="btn btn-primary mb-3">Add New Employee</a>
             </div>
             <table class="table table-bordered table-hover">
                 <thead class="table-dark">
@@ -16,6 +16,7 @@
                         <th>ID</th>
                         <th>User Name</th>
                         <th>Password</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,8 +25,8 @@
                         <td th:text="${employee.username}"></td>
                         <td th:text="${employee.password}"></td>
                         <td>
-                            <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-success btn-sm">Sửa</a>
-                            <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc không?')">Xóa</a>
+                            <a th:href="@{/Employee/edit/{id}(id=${employee.id})}" class="btn btn-success btn-sm">Sửa</a>
+                            <a th:href="@{/Employee/delete/{id}(id=${employee.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc không?')">Xóa</a>
                         </td>
                     </tr>
                 </tbody>

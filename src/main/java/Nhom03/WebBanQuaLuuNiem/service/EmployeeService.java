@@ -26,11 +26,6 @@ public class EmployeeService implements UserDetailsService {
     @Autowired
     private IRoleRepository roleRepository;
 
-    public void save(@NotNull Employee employee) {
-        employee.setPassword(new BCryptPasswordEncoder().encode(employee.getPassword()));
-        employeeRepository.save(employee);
-    }
-
     public void setDefaultRole(String username) {
         employeeRepository.findByUsername(username).ifPresentOrElse(
                 employee -> {
@@ -68,13 +63,14 @@ public class EmployeeService implements UserDetailsService {
     }
 
     public void addEmployee(Employee employee) {
+        employee.setPassword(new BCryptPasswordEncoder().encode(employee.getPassword()));
         employeeRepository.save(employee);
     }
 
     public void updateEmployee(@NotNull Employee employee) {
         Employee existingEmployee = employeeRepository.findById(employee.getId()).orElseThrow(() -> new IllegalStateException("Employee with ID " + employee.getId() + " does not exist."));
         existingEmployee.setUsername(employee.getUsername());
-        existingEmployee.setPassword(employee.getPassword());
+        existingEmployee.setPassword(new BCryptPasswordEncoder().encode(employee.getPassword()));
         employeeRepository.save(existingEmployee);
     }
 
