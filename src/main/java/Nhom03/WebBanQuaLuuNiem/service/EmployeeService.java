@@ -28,11 +28,11 @@ public class EmployeeService implements UserDetailsService {
 
     public void setDefaultRole(String username) {
         employeeRepository.findByUsername(username).ifPresentOrElse(
-                employee -> {
-                    employee.getRoles().add(roleRepository.findRoleById(Role.ADMIN.value));
-                    employeeRepository.save(employee);
-                },
-                () -> { throw new UsernameNotFoundException("User not found"); }
+            employee -> {
+                employee.getRoles().add(roleRepository.findRoleById(Role.ADMIN.value));
+                employeeRepository.save(employee);
+            },
+            () -> { throw new UsernameNotFoundException("User not found"); }
         );
     }
 

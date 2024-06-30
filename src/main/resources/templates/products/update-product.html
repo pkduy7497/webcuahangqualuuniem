@@ -7,24 +7,23 @@
     <body>
         <section layout:fragment="content" class="container mt-5">
             <h1>Edit Product</h1>
-            <form th:action="@{/products/update/{id}(id=${product.id})}" th:object="${product}" method="post" class="needs-validation" novalidate>
+            <form th:action="@{/products/update/{id}(id=${product.id})}" th:object="${product}" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name:</label>
                     <input type="text" th:field="*{name}" class="form-control" id="name" required>
                     <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="Quantity" class="form-label">Quantity:</label>
-                    <input type="number" th:field="*{Quantity}" class="form-control" id="Quantity" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="ImportPrice" class="form-label">Import Price:</label>
-                    <input type="number" th:field="*{ImportPrice}" class="form-control" id="ImportPrice" required>
+                    <label for="quantity" class="form-label">Quantity:</label>
+                    <input type="number" th:field="*{quantity}" class="form-control" id="quantity" required>
                 </div>
                 <div class="mb-3">
-                    <label for="SalesPrice" class="form-label">Sale Price:</label>
-                    <input type="number" th:field="*{SalesPrice}" class="form-control" id="SalesPrice" required>
+                    <label for="importPrice" class="form-label">Import Price:</label>
+                    <input type="number" th:field="*{importPrice}" class="form-control" id="importPrice" required>
+                </div>
+                <div class="mb-3">
+                    <label for="salesPrice" class="form-label">Sale Price:</label>
+                    <input type="number" th:field="*{salesPrice}" class="form-control" id="salesPrice" required>
                 </div>
                 <div class="mb-3">
                     <label for="category" class="form-label">Category:</label>
@@ -35,6 +34,16 @@
                 <div class="mb-3">
                     <label for="description" class="form-label">Description:</label>
                     <textarea th:field="*{description}" class="form-control" id="description" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="productImages" class="form-label">Product Images:</label>
+                    <input type="file" id="productImages" name="productImages" class="form-control" multiple/>
+                </div>
+                <div class="mb-3">
+                    <label for="existingImages" class="form-label">Existing Images:</label>
+                    <div th:each="image : ${product.images}">
+                        <img th:src="@{${image.imagePath}}" class="img-thumbnail" style="max-width: 100px; max-height: 100px;" alt="" src="">
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
                 <a th:href="@{/products}" class="btn btn-link">Cancel</a>

@@ -34,6 +34,7 @@ public class SecurityConfig {
         auth.setPasswordEncoder(passwordEncoder());
         return auth;
     }
+    
 
     @Bean
     public SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http) throws Exception {
@@ -41,7 +42,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/register", "/error", "/products", "/cart", "/cart/**")
                 .permitAll()
-                .requestMatchers("/products/edit/**", "/products/add", "/products/delete")
+                .requestMatchers("/products/edit/**", "/products/add", "/products/delete","/categories/edit/**", "/categories/add", "/categories/delete","/categories","/Employee/edit/**", "/Employee/add", "/Employee/delete","/Employee")
                 .hasAnyAuthority("ADMIN")
                 .requestMatchers("/api/**")
                 .permitAll()
