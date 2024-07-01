@@ -7,8 +7,6 @@ import Nhom03.WebBanQuaLuuNiem.repository.EmployeeRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @Transactional
-public class EmployeeService implements UserDetailsService {
+public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -36,20 +34,6 @@ public class EmployeeService implements UserDetailsService {
         );
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var employee = employeeRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Employee not found"));
-        return org.springframework.security.core.userdetails.User
-            .withUsername(employee.getUsername())
-            .password(employee.getPassword())
-            .authorities(employee.getAuthorities())
-            .accountExpired(!employee.isAccountNonExpired())
-            .accountLocked(!employee.isAccountNonLocked())
-            .credentialsExpired(!employee.isCredentialsNonExpired())
-            .disabled(!employee.isEnabled())
-            .build();
-    }
-
     public Optional<Employee> findByUsername(String username) throws UsernameNotFoundException {
         return employeeRepository.findByUsername(username);
     }
@@ -64,6 +48,8 @@ public class EmployeeService implements UserDetailsService {
 
     public void addEmployee(Employee employee) {
         employee.setPassword(new BCryptPasswordEncoder().encode(employee.getPassword()));
+        Nhom03.WebBanQuaLuuNiem.model.Role userRole = roleRepository.findRoleById(1L);
+        employee.getRoles().add(userRole);
         employeeRepository.save(employee);
     }
 

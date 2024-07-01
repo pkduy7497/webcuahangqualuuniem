@@ -28,21 +28,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        var auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(userDetailsService());
-        auth.setPasswordEncoder(passwordEncoder());
-        return auth;
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
-    
 
     @Bean
-    public SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/register", "/error", "/products", "/cart", "/cart/**")
                 .permitAll()
-                .requestMatchers("/products/edit/**", "/products/add", "/products/delete","/categories/edit/**", "/categories/add", "/categories/delete","/categories","/Employee/edit/**", "/Employee/add", "/Employee/delete","/Employee")
+                .requestMatchers("/products/edit/**", "/products/add", "/products/delete","/categories/edit/**", "/categories/add", "/categories/delete","/categories","/Employee/edit/**", "/Employee/add", "/Employee/delete", "/Employee")
                 .hasAnyAuthority("ADMIN")
                 .requestMatchers("/api/**")
                 .permitAll()

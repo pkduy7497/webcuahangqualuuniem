@@ -2,7 +2,6 @@ package Nhom03.WebBanQuaLuuNiem.controller;
 
 import Nhom03.WebBanQuaLuuNiem.model.CartItem;
 import Nhom03.WebBanQuaLuuNiem.model.Order;
-import Nhom03.WebBanQuaLuuNiem.model.Product;
 import Nhom03.WebBanQuaLuuNiem.service.CartService;
 import Nhom03.WebBanQuaLuuNiem.service.OrderService;
 import jakarta.validation.Valid;

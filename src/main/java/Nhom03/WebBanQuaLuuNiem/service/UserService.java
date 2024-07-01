@@ -1,7 +1,9 @@
 package Nhom03.WebBanQuaLuuNiem.service;
 
 import Nhom03.WebBanQuaLuuNiem.Role;
+import Nhom03.WebBanQuaLuuNiem.model.Employee;
 import Nhom03.WebBanQuaLuuNiem.model.User;
+import Nhom03.WebBanQuaLuuNiem.repository.EmployeeRepository;
 import Nhom03.WebBanQuaLuuNiem.repository.IRoleRepository;
 import Nhom03.WebBanQuaLuuNiem.repository.IUserRepository;
 import jakarta.validation.constraints.NotNull;
@@ -25,8 +27,13 @@ public class UserService implements UserDetailsService {
     @Autowired
     private IRoleRepository roleRepository;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     public void save(@NotNull User user) {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        Nhom03.WebBanQuaLuuNiem.model.Role userRole = roleRepository.findRoleById(2L);
+        user.getRoles().add(userRole);
         userRepository.save(user);
     }
 
@@ -42,16 +49,31 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return org.springframework.security.core.userdetails.User
-            .withUsername(user.getUsername())
-            .password(user.getPassword())
-            .authorities(user.getAuthorities())
-            .accountExpired(!user.isAccountNonExpired())
-            .accountLocked(!user.isAccountNonLocked())
-            .credentialsExpired(!user.isCredentialsNonExpired())
-            .disabled(!user.isEnabled())
-            .build();
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            return org.springframework.security.core.userdetails.User
+                .withUsername(user.get().getUsername())
+                .password(user.get().getPassword())
+                .authorities(user.get().getAuthorities())
+                .accountExpired(!user.get().isAccountNonExpired())
+                .accountLocked(!user.get().isAccountNonLocked())
+                .credentialsExpired(!user.get().isCredentialsNonExpired())
+                .disabled(!user.get().isEnabled())
+                .build();
+        }
+        Optional<Employee> employee = employeeRepository.findByUsername(username);
+        if (employee.isPresent()) {
+            return org.springframework.security.core.userdetails.User
+                .withUsername(employee.get().getUsername())
+                .password(employee.get().getPassword())
+                .authorities(employee.get().getAuthorities())
+                .accountExpired(!employee.get().isAccountNonExpired())
+                .accountLocked(!employee.get().isAccountNonLocked())
+                .credentialsExpired(!employee.get().isCredentialsNonExpired())
+                .disabled(!employee.get().isEnabled())
+                .build();
+        }
+        throw new UsernameNotFoundException("User not found");
     }
 
     public Optional<User> findByUsername(String username) throws UsernameNotFoundException {

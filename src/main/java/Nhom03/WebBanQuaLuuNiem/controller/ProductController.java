@@ -81,7 +81,7 @@ public class ProductController {
         if(image.getOriginalFilename() != null) {
             fileName = StringUtils.cleanPath(image.getOriginalFilename());
         }
-        String newFileName = UUID.randomUUID().toString() + "_" + fileName;
+        String newFileName = UUID.randomUUID() + "_" + fileName;
         Path filePath = dirImages.resolve(newFileName);
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         return newFileName;
